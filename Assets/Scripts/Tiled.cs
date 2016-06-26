@@ -30,7 +30,7 @@ public class Tiled {
 		for(int y = 0; y < height; y++){
 			for(int x = 0; x < width; x++){
 				string id = data[i];
-				TileFactory.CreateTile(int.Parse(id), x, y);
+				TileFactory.CreateAndAddTile((TileType)int.Parse(id), x, y);
 				i++;
 			}
 		}

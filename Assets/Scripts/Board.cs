@@ -14,6 +14,7 @@ public class Board : MonoBehaviour {
 	}
 
 	public GameObject viewBlockerPrefab;
+	GameObject vbl, vbr;
 
 	Tile[,] tiles;
 	int _width, _height;
@@ -26,8 +27,6 @@ public class Board : MonoBehaviour {
 	bool inputCenteredH = true;
 	bool inputCenteredV = true;
 
-	GameObject vbl, vbr;
-
 	void Start(){
 		vbl = GameObject.Instantiate(viewBlockerPrefab);
 		vbr = GameObject.Instantiate(viewBlockerPrefab);
@@ -35,7 +34,6 @@ public class Board : MonoBehaviour {
 
 		Invoke("CreateBoard", .5f);
 	}
-
 
 	void CreateBoard(){
 
@@ -112,10 +110,11 @@ public class Board : MonoBehaviour {
 
 	public bool IsSolid(Vector2 pos){
 		int tx = (int)pos.x, ty = (int)pos.y;
-		if(tx < 0 || tx >= width || ty < 0 || ty >= height)
+
+		if(tx < 0 || tx >= width || ty < 0 || ty >= height) // outside board?
 			return true;
 		if(tiles[tx, ty] != null)
-			return true;
+			return tiles[tx, ty].IsSolid();
 
 		return false;
 	}
@@ -126,23 +125,47 @@ public class Board : MonoBehaviour {
 		tiles[tx, ty] = tile;
 	}
 
+	public void ReplaceTile(int tx, int ty, Tile newTile){
+		tiles[tx, ty] = newTile;
+	}
+
+	// Destroy a tile and replace it with another one
+	public void SwapOutTile(Tile tile, Tile newTile){
+		newTile.transform.localPosition = tile.transform.localPosition;
+		newTile.tilePos = tile.tilePos;
+
+		ReplaceTile(tile.tx, tile.ty, newTile);
+
+		GameObject.Destroy(tile.gameObject);
+	}
+
+	public void MoveTile(int tx, int ty, Vector2 dir){
+		Tile tile = tiles[tx, ty];
+		if(tile == null)
+			return; 
+
+		if(tile.AttemptMove(dir)){
+			int tx2 = tx + (int)dir.x, ty2 = ty + (int)dir.y;
+			Tile overlappedTile = tiles[tx2, ty2];
+
+			tiles[tx, ty] = null;
+			ReplaceTile(tx2, ty2, tile);
+
+			if(overlappedTile != null){
+				overlappedTile.WasOverlapped(tile);
+			}
+		}
+	}
+
 	void MoveRowHorizontal(int row, int dirX){
 		Vector2 dir = new Vector2(dirX, 0);
 
-		// Attempt to move each tile
 		for(int i = 0; i < width; i++){
-
 			// start from right or left side, based on dirX
 			int tx = (dirX == 1 ? width - i - 1 : i);
-
-			Tile tile = tiles[tx, row];
-			if(tile != null){
-				if(tile.AttemptMove(dir)){
-					tiles[tx + dirX, row] = tile;
-					tiles[tx, row] = null;
-				}
-			}
+			MoveTile(tx, row, dir);
 		}
+		CheckTileCoords();
 	}
 
 	void MoveRowVertical(int row, int dirY){
@@ -152,7 +175,6 @@ public class Board : MonoBehaviour {
 		bool canMove = true;
 		for(int i = 0; i < width; i++){
 			Tile tile = tiles[i, row];
-
 			if(tile != null && !tiles[i, row].MoveOk(forwards)){
 				canMove = false;
 				break;
@@ -162,30 +184,27 @@ public class Board : MonoBehaviour {
 		// Move row 
 		if(canMove){
 			for(int i = 0; i < width; i++){
-				Tile tile = tiles[i, row];
-				if(tile != null && tile.AttemptMove(forwards)){
-					tiles[i, row] = null;
-					tiles[i, row+dirY] = tile;
-				}
+				MoveTile(i, row, forwards);
 			}
-
 			_playerRow += dirY;
 		}
+		CheckTileCoords();
 	}
 
-	void PrintSolids(){
+	void PrintIds(){
 		string s = "";
 		Debug.Log("Printing Solids");
 		for(int j = 0; j < height; j++){
 			for(int i = 0; i < width; i++ ){
-				if(IsSolid(new Vector2(i, j)))
-					s += "1";
+				Tile tile = tiles[i, j];
+				if(tile != null)
+					s += (int)tile.type;
 				else
 					s += "0";
 			}
-			Debug.Log(s);
-			s = "";
+			s += "\n";
 		}
+		Debug.Log(s);
 	}
 
 	void CheckTileCoords(){
@@ -203,6 +222,9 @@ public class Board : MonoBehaviour {
 				}
 			}
 		}
-		Debug.Log("Tile coords test: " + (success ? "succeeded" : "failed"));
+		if(!success){
+			Debug.LogError("Tile coords test failed! Printing board ids: ");
+			PrintIds();
+		}
 	}
 }

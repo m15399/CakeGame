@@ -6,7 +6,7 @@ public class TileFactory : MonoBehaviour {
 	[System.Serializable]
 	public class PrefabIdPair : System.Object {
 		public GameObject prefab;
-		public int id;
+		public TileType type;
 	}
 
 	public PrefabIdPair[] prefabs;
@@ -22,31 +22,39 @@ public class TileFactory : MonoBehaviour {
 		}
 	}
 
-	static Dictionary<int, GameObject> _prefabMap = null; 
-	static Dictionary<int, GameObject> prefabMap {
+	static Dictionary<TileType, GameObject> _prefabMap = null; 
+	static Dictionary<TileType, GameObject> prefabMap {
 		get {
 			if(_prefabMap == null){
-				// Build a map of int -> GameObject
-				_prefabMap = new Dictionary<int, GameObject>();
+				// Build a map of TileType -> prefab
+				_prefabMap = new Dictionary<TileType, GameObject>();
 				foreach (PrefabIdPair pair in tileFactory.prefabs){
-					_prefabMap[pair.id] = pair.prefab;
+					_prefabMap[pair.type] = pair.prefab;
 				}
 			}
 			return _prefabMap;
 		}
 	}
 
-	public static void CreateTile(GameObject prefab, int tx, int ty){
-		Tile tile = GameObject.Instantiate(prefab).GetComponent<Tile>();
-		tile.transform.parent = Board.board.transform;
-		tile.tilePos = new Vector2(tx, ty); 
-		Board.board.AddTile(tx, ty, tile);
+	public static Tile CreateTile(TileType type){
+		try {
+			GameObject prefab = prefabMap[type];
+			Tile tile = GameObject.Instantiate(prefab).GetComponent<Tile>();
+
+			tile.transform.parent = Board.board.transform;
+			tile.type = type;
+			return tile;
+		} catch (KeyNotFoundException) {
+			return null;
+		}
 	}
 
-	public static void CreateTile(int id, int tx, int ty){
-		try {
-			CreateTile(prefabMap[id], tx, ty);
-		} catch (KeyNotFoundException) {}
+	public static void CreateAndAddTile(TileType type, int tx, int ty){
+		Tile tile = CreateTile(type);
+		if(tile != null){
+			tile.tilePos = new Vector2(tx, ty); 
+			Board.board.AddTile(tx, ty, tile);
+		}
 	}
 
 }

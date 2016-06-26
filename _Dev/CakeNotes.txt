@@ -1,9 +1,13 @@
 things that dance can be moved with arrow keys
 when a dude eats cake, he turns into happy fixed block
 you win when there are no more dudes in your control
+or when you eat all the cake?
 
 different dudes have different properties
-hop 2 spaces, hop every 2 moves, swing sword before moving
+hop 2 spaces 
+hop every 2 moves
+swing sword before moving
+fat dude that eats 2/3 cakes
 
 r=qf======qf===qr=qf======qf==s=…
 and

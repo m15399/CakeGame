@@ -1,11 +1,15 @@
 fileFormatVersion: 2
 guid: 8eed5ed7d7735420cb330069ffc3602c
-timeCreated: 1466921255
+timeCreated: 1466969934
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: tileset_0
     21300002: tileset_1
+    21300004: BaseTileset_0
+    21300006: BaseTileset_1
+    21300008: BaseTileset_2
+    21300010: BaseTileset_3
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -52,7 +56,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: tileset_0
+    - name: BaseTileset_0
       rect:
         serializedVersion: 2
         x: 0
@@ -69,10 +73,44 @@ TextureImporter:
         - {x: 57, y: -57}
         - {x: 57, y: 57}
         - {x: 55, y: 58}
-    - name: tileset_1
+    - name: BaseTileset_1
       rect:
         serializedVersion: 2
         x: 128
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -56, y: 58}
+        - {x: -58, y: 56}
+        - {x: -58, y: -57}
+        - {x: 57, y: -57}
+        - {x: 57, y: 57}
+        - {x: 55, y: 58}
+    - name: BaseTileset_2
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -56, y: 58}
+        - {x: -58, y: 56}
+        - {x: -58, y: -57}
+        - {x: 57, y: -57}
+        - {x: 57, y: 57}
+        - {x: 55, y: 58}
+    - name: BaseTileset_3
+      rect:
+        serializedVersion: 2
+        x: 384
         y: 896
         width: 128
         height: 128

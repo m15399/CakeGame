@@ -11,7 +11,7 @@ GameObject:
   - 212: {fileID: 21249312}
   - 114: {fileID: 11450692}
   m_Layer: 0
-  m_Name: FixedTile
+  m_Name: EatenTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,6 +41,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveType: 0
+  overlapType: 0
+  id: -1
   tilePos: {x: 0, y: 0}
 --- !u!212 &21249312
 SpriteRenderer:
@@ -68,7 +70,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300006, guid: 8eed5ed7d7735420cb330069ffc3602c, type: 3}
+  m_Sprite: {fileID: 21300010, guid: 8eed5ed7d7735420cb330069ffc3602c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

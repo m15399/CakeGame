@@ -11,7 +11,15 @@ public class Tile : MonoBehaviour {
 //		PUSHABLE
 	}
 
+	public enum OverlapType {
+		SOLID,
+		OVERLAPPABLE
+	}
+
 	public MoveType moveType;
+	public OverlapType overlapType;
+
+	public TileType type = TileType.NONE;
 
 	public Vector2 tilePos;
 	public int tx { get { return (int)tilePos.x; }}
@@ -29,8 +37,24 @@ public class Tile : MonoBehaviour {
 		transform.localPosition = Vector3.Lerp(transform.localPosition, desiredPos, fac);
 	}
 
+	public bool IsSolid(){
+		switch(overlapType){
+		case OverlapType.OVERLAPPABLE:
+			return false;
+		case OverlapType.SOLID:
+		default:
+			return true;
+		}
+	}
+
 	public bool MoveOk(Vector2 dir){
-		return !Board.board.IsSolid(tilePos + dir);
+		switch(moveType){
+		case MoveType.FIXED:
+			return true;
+		case MoveType.MOVES:
+		default:
+			return !Board.board.IsSolid(tilePos + dir);
+		}
 	}
 
 	public bool WillMove(Vector2 dir){
@@ -51,5 +75,13 @@ public class Tile : MonoBehaviour {
 		} else {
 			return false;
 		}
+	}
+
+	public void WasOverlapped(Tile other){
+		OverlapHandler oh = GetComponent<OverlapHandler>();
+		if(oh != null)
+			oh.WasOverlapped(this, other);
+		else
+			GameObject.Destroy(gameObject);
 	}
 }

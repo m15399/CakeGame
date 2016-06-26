@@ -154,9 +154,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabs:
   - prefab: {fileID: 149452, guid: 57cbc8ab512fe4c9bb67c30cc3049855, type: 2}
-    id: 1
+    type: 1
   - prefab: {fileID: 149452, guid: 17c49dc633320497ea04fa8343e9eca5, type: 2}
-    id: 2
+    type: 2
+  - prefab: {fileID: 149452, guid: 5cefb0e1cd6c3490fbb298481023d47f, type: 2}
+    type: 3
+  - prefab: {fileID: 149452, guid: 3c055c5d906794b989e1ea0ee70fe3a7, type: 2}
+    type: 4
 --- !u!4 &1289457039
 Transform:
   m_ObjectHideFlags: 0
