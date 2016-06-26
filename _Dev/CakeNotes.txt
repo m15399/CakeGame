@@ -1,0 +1,13 @@
+things that dance can be moved with arrow keys
+when a dude eats cake, he turns into happy fixed block
+you win when there are no more dudes in your control
+
+different dudes have different properties
+hop 2 spaces, hop every 2 moves, swing sword before moving
+
+r=qf======qf===qr=qf======qf==s=…
+and
+q w y— q w y— [— 
+
+
+fqf— fqfa=v=xa— f—     a—s—qs—f—
