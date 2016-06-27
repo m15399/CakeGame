@@ -13,6 +13,8 @@ public class Board : MonoBehaviour {
 		}
 	}
 
+	public string loadLevelName;
+
 	public GameObject viewBlockerPrefab;
 	GameObject vbl, vbr;
 
@@ -37,7 +39,7 @@ public class Board : MonoBehaviour {
 
 	void CreateBoard(){
 
-		Tiled.Import("TestLevel");
+		Tiled.Import(loadLevelName);
 
 	}
 

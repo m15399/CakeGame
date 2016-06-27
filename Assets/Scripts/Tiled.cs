@@ -1,29 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Xml;
 
 public class Tiled {
 
-	// Expects .txt Flare map file exported from Tiled
+	// Expects the name of a csv-mode .tmx file, renamed to .txt
 	public static void Import(string levelName){
+		
 		string levelPath = "Levels/" + levelName;
 		Debug.Log("Loading level at: Resources/" + levelPath + ".txt");
 		TextAsset ta = (TextAsset)Resources.Load(levelPath);
-		string levelString = ta.text;
 
-		int widthIndex = levelString.IndexOf("width=") + 6;
-		int widthLength = levelString.IndexOf('\n', widthIndex) - widthIndex;
-		string widthString = levelString.Substring(widthIndex, widthLength);
-		int width = int.Parse(widthString);
+		XmlDocument xml = new XmlDocument();
+		xml.LoadXml(ta.text);
 
-		int heightIndex = levelString.IndexOf("height=") + 7;
-		int heightLength = levelString.IndexOf('\n', heightIndex) - heightIndex;
-		string heightString = levelString.Substring(heightIndex, heightLength);
-		int height = int.Parse(heightString);
-
+		XmlNode mapNode = xml.SelectSingleNode("map");
+		int width = int.Parse(mapNode.Attributes["width"].Value);
+		int height = int.Parse(mapNode.Attributes["height"].Value);
 		Debug.Log("Found map of size: " + width + " x " + height);
 		Board.board.width = width; Board.board.height = height;
 
-		string dataString = levelString.Substring(levelString.IndexOf("data=") + 5);
+		XmlNode dataNode = xml.SelectSingleNode("map/layer/data");
+		string dataString = dataNode.InnerText;
+		if(dataString.Length == 0){
+			Debug.LogError("TMX file has no data, or it is not using CSV encoding");
+			return;
+		}
 		string[] data = dataString.Split(',');
 
 		int i = 0;

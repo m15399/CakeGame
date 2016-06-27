@@ -11,7 +11,7 @@ GameObject:
   - 212: {fileID: 21249312}
   - 114: {fileID: 11450692}
   m_Layer: 0
-  m_Name: Tile
+  m_Name: Dude
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,6 +41,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveType: 1
+  overlapType: 0
+  type: 0
   tilePos: {x: 0, y: 0}
 --- !u!212 &21249312
 SpriteRenderer:
