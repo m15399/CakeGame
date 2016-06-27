@@ -14,6 +14,7 @@ public class Board : MonoBehaviour {
 	}
 
 	public string loadLevelName;
+	bool loadingNextBoard = true;
 
 	public GameObject viewBlockerPrefab;
 	GameObject vbl, vbr;
@@ -34,20 +35,50 @@ public class Board : MonoBehaviour {
 		vbr = GameObject.Instantiate(viewBlockerPrefab);
 		vbr.transform.localScale = new Vector3(-1, 1, 1);
 
-		Invoke("CreateBoard", .5f);
+		Invoke("LoadBoard", .5f);
 	}
 
-	void CreateBoard(){
+	bool LoadBoard(){
+		if(!Tiled.LevelExists(loadLevelName))
+			return false;
+		
+		ClearBoard();
+		_playerRow = 0;
+		bool success = Tiled.Import(loadLevelName);
+		if(success)
+			loadingNextBoard = false;
+		
+		return success;
+	}
 
-		Tiled.Import(loadLevelName);
+	/// <summary>
+	/// Try to load the next level based on current level's filename
+	/// </summary>
+	void AttemptLoadNextBoard(){
+		string levelNumS = "";
+		for(int i = loadLevelName.Length-1; i >= 0; i--){
+			char ch = loadLevelName[i];
+			if(char.IsDigit(ch))
+				levelNumS = ch + levelNumS;
+			else
+				break;
+		}
+		int nextLevelNum = int.Parse(levelNumS) + 1;
+		string nextLevelNumS = ("" + nextLevelNum).PadLeft(levelNumS.Length, '0');
 
+		loadLevelName = loadLevelName.Substring(0, loadLevelName.Length - levelNumS.Length) + nextLevelNumS;
+
+		bool success = LoadBoard();
+		if(!success){
+			Debug.Log("Out of levels!");
+		}
 	}
 
 	void Resize(){
 		ClearBoard();
 		tiles = new Tile[width, height];
 
-		transform.localPosition = new Vector3(-width/2.0f + .5f, 3, 0);
+		transform.localPosition = new Vector3(-width/2.0f + .5f, 1, 0);
 		vbl.transform.position = new Vector3(-width/2.0f, 0);
 		vbr.transform.position = new Vector3(width/2.0f, 0);
 	}
@@ -103,11 +134,29 @@ public class Board : MonoBehaviour {
 				moveDirV = 0;
 		}
 
+		bool foundMoveable = false;
+		for(int i = 0; i < width; i++){
+			Tile tile = tiles[i, playerRow];
+			if(tile != null && tile.moveType == Tile.MoveType.MOVES)
+				foundMoveable = true;
+		}
+		if(!foundMoveable){ // Level completed
+			moveDirV = 0;
+			if(!loadingNextBoard){
+				loadingNextBoard = true;
+				Invoke("AttemptLoadNextBoard", .6f);
+			}
+		}
+
 		if(moveDirH != 0)
 			MoveRowHorizontal(playerRow, moveDirH);
 		if(moveDirV != 0)
 			MoveRowVertical(playerRow, -moveDirV);
 
+		// Restart button
+		if(Input.GetKeyDown("r")){
+			LoadBoard();
+		}
 	}
 
 	public bool IsSolid(Vector2 pos){

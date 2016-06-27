@@ -4,12 +4,35 @@ using System.Xml;
 
 public class Tiled {
 
+	static string currLevelName = "";
+	static TextAsset currLevel = null;
+
+	static string GetLevelPath(string levelName){
+		return "Levels/" + levelName;
+	}
+
+	static TextAsset OpenLevel(string levelName){
+		if(levelName == currLevelName)
+			return currLevel;
+
+		currLevel = (TextAsset)Resources.Load(GetLevelPath(levelName));
+		return currLevel;
+	}
+
+	public static bool LevelExists(string levelName){
+		return OpenLevel(levelName) != null;
+	}
+
 	// Expects the name of a csv-mode .tmx file, renamed to .txt
-	public static void Import(string levelName){
-		
-		string levelPath = "Levels/" + levelName;
-		Debug.Log("Loading level at: Resources/" + levelPath + ".txt");
-		TextAsset ta = (TextAsset)Resources.Load(levelPath);
+	public static bool Import(string levelName){
+
+		Debug.Log("Importing level: Resources/" + GetLevelPath(levelName) + ".txt");
+
+		TextAsset ta = OpenLevel(levelName);
+		if(ta == null){
+			Debug.Log("Level not found.");
+			return false;
+		}
 
 		XmlDocument xml = new XmlDocument();
 		xml.LoadXml(ta.text);
@@ -24,7 +47,7 @@ public class Tiled {
 		string dataString = dataNode.InnerText;
 		if(dataString.Length == 0){
 			Debug.LogError("TMX file has no data, or it is not using CSV encoding");
-			return;
+			return false;
 		}
 		string[] data = dataString.Split(',');
 
@@ -36,6 +59,8 @@ public class Tiled {
 				i++;
 			}
 		}
+
+		return true;
 	}
 
 }
