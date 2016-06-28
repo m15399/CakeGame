@@ -49,12 +49,14 @@ public class TileFactory : MonoBehaviour {
 		}
 	}
 
-	public static void CreateAndAddTile(TileType type, int tx, int ty){
+	public static bool CreateAndAddTile(TileType type, int tx, int ty){
 		Tile tile = CreateTile(type);
 		if(tile != null){
 			tile.tilePos = new Vector2(tx, ty); 
 			Board.board.AddTile(tx, ty, tile);
-		}
+			return true;
+		} else 
+			return false;
 	}
 
 }

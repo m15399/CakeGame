@@ -6,6 +6,7 @@ public class Tiled {
 
 	static string currLevelName = "";
 	static TextAsset currLevel = null;
+	static int bottomWallOffset = 12;
 
 	static string GetLevelPath(string levelName){
 		return "Levels/" + levelName;
@@ -41,7 +42,8 @@ public class Tiled {
 		int width = int.Parse(mapNode.Attributes["width"].Value);
 		int height = int.Parse(mapNode.Attributes["height"].Value);
 		Debug.Log("Found map of size: " + width + " x " + height);
-		Board.board.width = width; Board.board.height = height;
+		Board.board.width = width; 
+		Board.board.height = height + bottomWallOffset;
 
 		XmlNode dataNode = xml.SelectSingleNode("map/layer/data");
 		string dataString = dataNode.InnerText;
@@ -51,14 +53,23 @@ public class Tiled {
 		}
 		string[] data = dataString.Split(',');
 
+		// Read data and add tiles
+		int maxY = 0;
 		int i = 0;
 		for(int y = 0; y < height; y++){
 			for(int x = 0; x < width; x++){
 				string id = data[i];
-				TileFactory.CreateAndAddTile((TileType)int.Parse(id), x, y);
+				if(TileFactory.CreateAndAddTile((TileType)int.Parse(id), x, y))
+					maxY = y;
 				i++;
 			}
 		}
+
+		// Add wall at bottom
+		for(int x = 0; x < width; x++){
+			TileFactory.CreateAndAddTile(TileType.WALL, x, maxY + bottomWallOffset);
+		}
+
 
 		return true;
 	}
