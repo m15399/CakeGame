@@ -26,6 +26,7 @@ public class Board : MonoBehaviour {
 
 	int _playerRow = 0;
 	public int playerRow { get { return _playerRow; } }
+	public int startRow { get; set; }
 
 	bool inputCenteredH = true;
 	bool inputCenteredV = true;
@@ -39,14 +40,20 @@ public class Board : MonoBehaviour {
 	}
 
 	bool LoadBoard(){
-		if(!Tiled.LevelExists(loadLevelName))
+		if(!TiledImporter.LevelExists(loadLevelName))
 			return false;
 		
 		ClearBoard();
-		_playerRow = 0;
-		bool success = Tiled.Import(loadLevelName);
-		if(success)
+		bool success = TiledImporter.Import(loadLevelName);
+		if(success){
 			loadingNextBoard = false;
+			_playerRow = startRow;
+
+			if(!HasMoveables(playerRow)){
+				Debug.LogError("Board was won with no moves. " +
+					"Did you forget to set the 'Start Row' property?");
+			}
+		}
 		
 		return success;
 	}
@@ -96,6 +103,8 @@ public class Board : MonoBehaviour {
 			}
 		}
 		tiles = null;
+		_playerRow = startRow = 0;
+
 	}
 
 	void Update(){
@@ -114,9 +123,9 @@ public class Board : MonoBehaviour {
 
 			float vertInput = Input.GetAxis("Vertical");
 			if(vertInput < -threshhold)
-				moveDirV = -1;
-			else if (vertInput > threshhold)
 				moveDirV = 1;
+			else if (vertInput > threshhold)
+				moveDirV = -1;
 
 
 			if(moveDirH == 0)
@@ -133,30 +142,34 @@ public class Board : MonoBehaviour {
 			else
 				moveDirV = 0;
 		}
+			
 
-		bool foundMoveable = false;
-		for(int i = 0; i < width; i++){
-			Tile tile = tiles[i, playerRow];
-			if(tile != null && tile.moveType == Tile.MoveType.MOVES)
-				foundMoveable = true;
-		}
-		if(!foundMoveable){ // Level completed
-			moveDirV = 0;
+		if(!HasMoveables(playerRow)){ // Level completed
+			moveDirV = moveDirH = 0;
 			if(!loadingNextBoard){
 				loadingNextBoard = true;
 				Invoke("AttemptLoadNextBoard", .6f);
 			}
 		}
-
+			
 		if(moveDirH != 0)
 			MoveRowHorizontal(playerRow, moveDirH);
 		if(moveDirV != 0)
-			MoveRowVertical(playerRow, -moveDirV);
+			MoveRowVertical(playerRow, moveDirV);
 
 		// Restart button
 		if(Input.GetKeyDown("r")){
 			LoadBoard();
 		}
+	}
+
+	bool HasMoveables(int row){
+		for(int i = 0; i < width; i++){
+			Tile tile = tiles[i, row];
+			if(tile != null && tile.moveType == Tile.MoveType.MOVES)
+				return true;
+		}
+		return false;
 	}
 
 	public bool IsSolid(Vector2 pos){

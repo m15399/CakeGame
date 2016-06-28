@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Xml;
 
-public class Tiled {
+public class TiledImporter {
 
 	static string currLevelName = "";
 	static TextAsset currLevel = null;
-	static int bottomWallOffset = 12;
+	static int bottomWallOffset = 12, topWallOffset = 10;
 
 	static string GetLevelPath(string levelName){
 		return "Levels/" + levelName;
@@ -43,7 +43,22 @@ public class Tiled {
 		int height = int.Parse(mapNode.Attributes["height"].Value);
 		Debug.Log("Found map of size: " + width + " x " + height);
 		Board.board.width = width; 
-		Board.board.height = height + bottomWallOffset;
+		Board.board.height = height + bottomWallOffset + topWallOffset;
+		Board.board.startRow = topWallOffset;
+
+		XmlNodeList properties = xml.SelectNodes("map/properties/property");
+		foreach(XmlNode property in properties){
+			string name = property.Attributes["name"].Value;
+			string value = property.Attributes["value"].Value;
+
+			switch(name){
+			case "Start Row":
+				Board.board.startRow = topWallOffset + int.Parse(value);
+				break;
+			default:
+				break;
+			}
+		}
 
 		XmlNode dataNode = xml.SelectSingleNode("map/layer/data");
 		string dataString = dataNode.InnerText;
@@ -59,17 +74,15 @@ public class Tiled {
 		for(int y = 0; y < height; y++){
 			for(int x = 0; x < width; x++){
 				string id = data[i];
-				if(TileFactory.CreateAndAddTile((TileType)int.Parse(id), x, y))
-					maxY = y;
+				if(TileFactory.CreateAndAddTile((TileType)int.Parse(id), x, y + topWallOffset))
+					maxY = y + topWallOffset;
 				i++;
 			}
 		}
 
-		// Add wall at bottom
-		for(int x = 0; x < width; x++){
-			TileFactory.CreateAndAddTile(TileType.WALL, x, maxY + bottomWallOffset);
-		}
-
+		// Add wall at top and bottom
+		TileFactory.AddFullWidthWall(0);
+		TileFactory.AddFullWidthWall(maxY + bottomWallOffset);
 
 		return true;
 	}
