@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a846509d26b004e8ab43a5f66de5f65b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadLevelName: TestWorld/04
+  loadLevelName: TestWorld/01
   viewBlockerPrefab: {fileID: 129728, guid: 52b8e421182664283a72efd7e08a05f2, type: 2}
 --- !u!4 &578437728
 Transform:

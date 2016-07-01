@@ -3,18 +3,18 @@
  <tileset firstgid="1" name="BaseTileset" tilewidth="128" tileheight="128" tilecount="64" columns="8">
   <image source="../../Art/BaseTileset.png" width="1024" height="1024"/>
  </tileset>
- <layer name="Tile Layer 1" width="4" height="80">
+ <layer name="Tile Layer 1" width="4" height="80" offsetx="-256" offsety="-128">
   <data encoding="csv">
-1,0,1,0,
+1,0,0,0,
 0,0,0,0,
-0,2,0,2,
+0,2,2,2,
+0,3,1,0,
+0,2,2,1,
+0,0,2,0,
+0,0,3,0,
+2,2,2,0,
 0,0,0,0,
-2,2,0,0,
-0,0,0,0,
-2,0,0,2,
-0,3,3,0,
-0,0,0,0,
-0,0,0,0,
+0,3,0,0,
 0,0,0,0,
 0,0,0,0,
 0,0,0,0,

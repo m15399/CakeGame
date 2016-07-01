@@ -14,7 +14,7 @@ public class Board : MonoBehaviour {
 	}
 
 	public string loadLevelName;
-	bool loadingNextBoard = true;
+	bool loadingBoard = true;
 
 	public GameObject viewBlockerPrefab;
 	GameObject vbl, vbr;
@@ -28,6 +28,7 @@ public class Board : MonoBehaviour {
 	public int playerRow { get { return _playerRow; } }
 	public int startRow { get; set; }
 
+	bool allowInput = false;
 	bool inputCenteredH = true;
 	bool inputCenteredV = true;
 
@@ -39,45 +40,63 @@ public class Board : MonoBehaviour {
 		Invoke("LoadBoard", .5f);
 	}
 
+	/// <summary>
+	/// Loads the board named by 'loadLevelName'
+	/// </summary>
 	bool LoadBoard(){
-		if(!TiledImporter.LevelExists(loadLevelName))
-			return false;
-		
-		ClearBoard();
-		bool success = TiledImporter.Import(loadLevelName);
-		if(success){
-			loadingNextBoard = false;
-			_playerRow = startRow;
+		loadingBoard = true;
+		allowInput = false;
+		bool success = false;
 
-			if(!HasMoveables(playerRow)){
-				Debug.LogError("Board was won with no moves. " +
-					"Did you forget to set the 'Start Row' property?");
+		if(TiledImporter.LevelExists(loadLevelName)){
+			ClearBoard();
+			success = TiledImporter.Import(loadLevelName);
+			if(success){
+				_playerRow = startRow;
+				allowInput = true;
+
+				if(!HasMoveables(playerRow)){
+					Debug.LogError("Board was won with no moves. " +
+						"Did you forget to set the 'Start Row' property?");
+				}
 			}
 		}
-		
+		loadingBoard = false;
 		return success;
 	}
 
-	/// <summary>
-	/// Try to load the next level based on current level's filename
-	/// </summary>
-	void AttemptLoadNextBoard(){
-		string levelNumS = "";
-		for(int i = loadLevelName.Length-1; i >= 0; i--){
-			char ch = loadLevelName[i];
-			if(char.IsDigit(ch))
-				levelNumS = ch + levelNumS;
-			else
-				break;
-		}
-		int nextLevelNum = int.Parse(levelNumS) + 1;
-		string nextLevelNumS = ("" + nextLevelNum).PadLeft(levelNumS.Length, '0');
+	void LoadNextBoard(){
+		LoadBoardByAdding(1);
+	}
 
-		loadLevelName = loadLevelName.Substring(0, loadLevelName.Length - levelNumS.Length) + nextLevelNumS;
+	void LoadBoardByAdding(int add){
+		LoadBoard(TiledImporter.GetLevelByAdding(loadLevelName, add));
+	}
+
+	void LoadBoardByNumber(int num){
+		LoadBoard(TiledImporter.GetLevelByNumber(loadLevelName, num));
+	}
+
+	void LoadBoard(string levelName){
+		string prevLoadLevelName = loadLevelName;
+		loadLevelName = levelName;
 
 		bool success = LoadBoard();
 		if(!success){
-			Debug.Log("Out of levels!");
+			Debug.Log("Couldn't find level: " + levelName);
+			loadLevelName = prevLoadLevelName;
+		}
+	}
+
+	void WinBoard(){
+		WinBoard(.6f);
+	}
+
+	void WinBoard(float delay){
+		if(!loadingBoard){
+			allowInput = false;
+			loadingBoard = true;
+			Invoke("LoadNextBoard", delay);
 		}
 	}
 
@@ -144,23 +163,40 @@ public class Board : MonoBehaviour {
 		}
 			
 
-		if(!HasMoveables(playerRow)){ // Level completed
-			moveDirV = moveDirH = 0;
-			if(!loadingNextBoard){
-				loadingNextBoard = true;
-				Invoke("AttemptLoadNextBoard", .6f);
-			}
+		if(!HasMoveables(playerRow) && allowInput){ // Level completed
+			WinBoard();
 		}
-			
-		if(moveDirH != 0)
-			MoveRowHorizontal(playerRow, moveDirH);
-		if(moveDirV != 0)
-			MoveRowVertical(playerRow, moveDirV);
+
+		if(allowInput){
+			if(moveDirH != 0)
+				MoveRowHorizontal(playerRow, moveDirH);
+			if(moveDirV != 0)
+				MoveRowVertical(playerRow, moveDirV);
+		}
 
 		// Restart button
 		if(Input.GetKeyDown("r")){
 			LoadBoard();
 		}
+
+		// Cheats
+		if(Application.isEditor){
+			if(Input.GetKeyDown("n"))
+				LoadBoardByAdding(1);
+			if(Input.GetKeyDown("p"))
+				LoadBoardByAdding(-1);
+			if(Input.GetKeyDown("1")) LoadBoardByNumber(1); 
+			if(Input.GetKeyDown("2")) LoadBoardByNumber(2); 
+			if(Input.GetKeyDown("3")) LoadBoardByNumber(3); 
+			if(Input.GetKeyDown("4")) LoadBoardByNumber(4); 
+			if(Input.GetKeyDown("5")) LoadBoardByNumber(5); 
+			if(Input.GetKeyDown("6")) LoadBoardByNumber(6); 
+			if(Input.GetKeyDown("7")) LoadBoardByNumber(7); 
+			if(Input.GetKeyDown("8")) LoadBoardByNumber(8); 
+			if(Input.GetKeyDown("9")) LoadBoardByNumber(9); 
+			if(Input.GetKeyDown("0")) LoadBoardByNumber(10); 
+		}
+
 	}
 
 	bool HasMoveables(int row){
@@ -272,6 +308,9 @@ public class Board : MonoBehaviour {
 	}
 
 	void CheckTileCoords(){
+		if(!Application.isEditor)
+			return;
+
 		bool success = true;
 		for(int i = 0; i < width; i++){
 			for(int j = 0; j < height; j++){
