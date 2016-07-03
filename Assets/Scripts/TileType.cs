@@ -4,10 +4,11 @@ using System.Collections;
 public enum TileType {
 
 	// This list's ordering is determined by the BaseTileset spritesheet
-	NONE,
+	NONE = 0,
 	DUDE,
 	WALL,
 	CAKE,
-	EATENCAKE
+	EATENCAKE,
+	JUMP_LEVEL,
 
 }

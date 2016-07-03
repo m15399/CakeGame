@@ -41,7 +41,7 @@ public class TileFactory : MonoBehaviour {
 			GameObject prefab = prefabMap[type];
 			Tile tile = GameObject.Instantiate(prefab).GetComponent<Tile>();
 
-			tile.transform.parent = Board.board.transform;
+			tile.transform.parent = Board.currBoard.transform;
 			tile.type = type;
 			return tile;
 		} catch (KeyNotFoundException) {
@@ -49,18 +49,18 @@ public class TileFactory : MonoBehaviour {
 		}
 	}
 
-	public static bool CreateAndAddTile(TileType type, int tx, int ty){
+	public static Tile CreateAndAddTile(TileType type, int tx, int ty){
 		Tile tile = CreateTile(type);
 		if(tile != null){
 			tile.tilePos = new Vector2(tx, ty); 
-			Board.board.AddTile(tx, ty, tile);
-			return true;
+			Board.currBoard.AddTile(tx, ty, tile);
+			return tile;
 		} else 
-			return false;
+			return null;
 	}
 
 	public static void AddFullWidthWall(int ty){
-		for(int tx = 0; tx < Board.board.width; tx++){
+		for(int tx = 0; tx < Board.currBoard.width; tx++){
 			TileFactory.CreateAndAddTile(TileType.WALL, tx, ty);
 		}
 	}

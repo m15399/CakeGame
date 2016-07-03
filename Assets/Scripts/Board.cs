@@ -4,16 +4,18 @@ using System.Collections.Generic;
 
 public class Board : MonoBehaviour {
 
-	static Board _board = null;
-	public static Board board {
+	const float defaultEndWaitTime = .6f;
+
+	static Board _currBoard = null;
+	public static Board currBoard {
 		get {
-			if(_board == null)
-				_board = GameObject.Find("Board").GetComponent<Board>();
-			return _board;
+			if(_currBoard == null)
+				_currBoard = GameObject.Find("Board").GetComponent<Board>();
+			return _currBoard;
 		}
 	}
 
-	public string loadLevelName;
+	string levelName, nextLevelName;
 	bool loadingBoard = true;
 
 	public GameObject viewBlockerPrefab;
@@ -36,28 +38,26 @@ public class Board : MonoBehaviour {
 		vbl = GameObject.Instantiate(viewBlockerPrefab);
 		vbr = GameObject.Instantiate(viewBlockerPrefab);
 		vbr.transform.localScale = new Vector3(-1, 1, 1);
-
-		Invoke("LoadBoard", .5f);
 	}
 
 	/// <summary>
-	/// Loads the board named by 'loadLevelName'
+	/// Loads the board named by 'levelName'
 	/// </summary>
 	bool LoadBoard(){
 		loadingBoard = true;
 		allowInput = false;
 		bool success = false;
 
-		if(TiledImporter.LevelExists(loadLevelName)){
+		if(TiledImporter.LevelExists(levelName)){
 			ClearBoard();
-			success = TiledImporter.Import(loadLevelName);
+			success = TiledImporter.Import(levelName);
 			if(success){
 				_playerRow = startRow;
 				allowInput = true;
 
 				if(!HasMoveables(playerRow)){
 					Debug.LogError("Board was won with no moves. " +
-						"Did you forget to set the 'Start Row' property?");
+						"Did you forget to set the 'Start Row' property? Currently " + startRow);
 				}
 			}
 		}
@@ -66,37 +66,52 @@ public class Board : MonoBehaviour {
 	}
 
 	void LoadNextBoard(){
-		LoadBoardByAdding(1);
+		if(nextLevelName.Length > 0){
+			LoadBoard(nextLevelName);
+		} else 
+			LoadBoardByAdding(1);
 	}
 
 	void LoadBoardByAdding(int add){
-		LoadBoard(TiledImporter.GetLevelByAdding(loadLevelName, add));
+		LoadBoard(TiledImporter.GetLevelByAdding(levelName, add));
 	}
 
 	void LoadBoardByNumber(int num){
-		LoadBoard(TiledImporter.GetLevelByNumber(loadLevelName, num));
+		LoadBoard(TiledImporter.GetLevelByNumber(levelName, num));
 	}
 
-	void LoadBoard(string levelName){
-		string prevLoadLevelName = loadLevelName;
-		loadLevelName = levelName;
+	public void LoadBoard(string newLevelName){
+		string prevLevelName = levelName;
+		levelName = newLevelName;
 
 		bool success = LoadBoard();
 		if(!success){
 			Debug.Log("Couldn't find level: " + levelName);
-			loadLevelName = prevLoadLevelName;
+			levelName = prevLevelName;
 		}
 	}
 
 	void WinBoard(){
-		WinBoard(.6f);
+		WinBoard(defaultEndWaitTime);
 	}
 
 	void WinBoard(float delay){
 		if(!loadingBoard){
-			allowInput = false;
-			loadingBoard = true;
+			EndBoard();
 			Invoke("LoadNextBoard", delay);
+		}
+	}
+
+	void EndBoard(){
+		allowInput = false;
+		loadingBoard = true;
+	}
+
+	public void EndBoardAndLoad(string level){
+		if(!loadingBoard){
+			EndBoard();
+			nextLevelName = level;
+			Invoke("LoadNextBoard", defaultEndWaitTime);
 		}
 	}
 
@@ -123,7 +138,8 @@ public class Board : MonoBehaviour {
 		}
 		tiles = null;
 		_playerRow = startRow = 0;
-
+		allowInput = false;
+		nextLevelName = "";
 	}
 
 	void Update(){
@@ -172,29 +188,29 @@ public class Board : MonoBehaviour {
 				MoveRowHorizontal(playerRow, moveDirH);
 			if(moveDirV != 0)
 				MoveRowVertical(playerRow, moveDirV);
-		}
 
-		// Restart button
-		if(Input.GetKeyDown("r")){
-			LoadBoard();
-		}
+			// Restart button
+			if(Input.GetKeyDown("r")){
+				LoadBoard();
+			}
 
-		// Cheats
-		if(Application.isEditor){
-			if(Input.GetKeyDown("n"))
-				LoadBoardByAdding(1);
-			if(Input.GetKeyDown("p"))
-				LoadBoardByAdding(-1);
-			if(Input.GetKeyDown("1")) LoadBoardByNumber(1); 
-			if(Input.GetKeyDown("2")) LoadBoardByNumber(2); 
-			if(Input.GetKeyDown("3")) LoadBoardByNumber(3); 
-			if(Input.GetKeyDown("4")) LoadBoardByNumber(4); 
-			if(Input.GetKeyDown("5")) LoadBoardByNumber(5); 
-			if(Input.GetKeyDown("6")) LoadBoardByNumber(6); 
-			if(Input.GetKeyDown("7")) LoadBoardByNumber(7); 
-			if(Input.GetKeyDown("8")) LoadBoardByNumber(8); 
-			if(Input.GetKeyDown("9")) LoadBoardByNumber(9); 
-			if(Input.GetKeyDown("0")) LoadBoardByNumber(10); 
+			// Cheats
+			if(Application.isEditor){
+				if(Input.GetKeyDown("n"))
+					LoadBoardByAdding(1);
+				if(Input.GetKeyDown("p"))
+					LoadBoardByAdding(-1);
+				if(Input.GetKeyDown("1")) LoadBoardByNumber(1); 
+				if(Input.GetKeyDown("2")) LoadBoardByNumber(2); 
+				if(Input.GetKeyDown("3")) LoadBoardByNumber(3); 
+				if(Input.GetKeyDown("4")) LoadBoardByNumber(4); 
+				if(Input.GetKeyDown("5")) LoadBoardByNumber(5); 
+				if(Input.GetKeyDown("6")) LoadBoardByNumber(6); 
+				if(Input.GetKeyDown("7")) LoadBoardByNumber(7); 
+				if(Input.GetKeyDown("8")) LoadBoardByNumber(8); 
+				if(Input.GetKeyDown("9")) LoadBoardByNumber(9); 
+				if(Input.GetKeyDown("0")) LoadBoardByNumber(10); 
+			}
 		}
 
 	}

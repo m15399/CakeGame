@@ -28,7 +28,7 @@ public class Tile : MonoBehaviour {
 	void Update () {
 		Vector3 desiredPos = new Vector3(
 			tilePos.x, 
-			Board.board.playerRow - tilePos.y, 
+			Board.currBoard.playerRow - tilePos.y, 
 			transform.localPosition.z
 		);
 
@@ -53,7 +53,7 @@ public class Tile : MonoBehaviour {
 			return true;
 		case MoveType.MOVES:
 		default:
-			return !Board.board.IsSolid(tilePos + dir);
+			return !Board.currBoard.IsSolid(tilePos + dir);
 		}
 	}
 

@@ -8,18 +8,47 @@ one-way guys with arrows
 hop 2 spaces 
 hop every 2 moves
 swing sword before moving
-fat dude that eats 2/3 cakes
+skinny dude that eats 2 cakes
 
 blocks:
 pushable
 spikes/lava must be hopped, lasers must be ghosted through
 breakable
 buttons, gates can be ghosted through
+side portals (loop around)
+invisible wall 
 
 levels:
 force to move up tutorial
 force move past cake to get a cake on the other side, then come back up
 levels where one special guy (eg ghost) has to save dudes one at a time
+different themes for each world (skins of wall/sides/ground)
+
+game:
+title screen has floating cake-star-field
+levels are laid out in a cake shape - each world is a slice
+level select - you move a guy around who eats the current world/level and 
+	a thought bubble above him gives a preview
+level select 2 - you move a guy and eat the cake that has the picture of the level
+	built into main menu?
+game menus
+	a 3x3 for menus - up down left right selects 
+	use board - buttons are cakes - landing on it sets the next “level”
+	deactivate curr board and select pause board for new one
+main menu - play, credits, options, dlc?
+	walk right into level select?
+options menu - audio (two walls you can walk into), control select, 
+	delete data, quit
+control select
+need a 64x64 font
+
+programming:
+preload all text files?
+
+
+store:
+how to pop up rating request?
+
 
 r=qf======qf===qr=qf======qf==s=…
 and
