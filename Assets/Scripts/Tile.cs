@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class Tile : MonoBehaviour {
 
 	static float snapSpeed = .3f; 
@@ -25,7 +26,24 @@ public class Tile : MonoBehaviour {
 	public int tx { get { return (int)tilePos.x; }}
 	public int ty { get { return (int)tilePos.y; }}
 
+	void Start(){
+
+	}
+
 	void Update () {
+		// Edit mode
+		if(!Application.isPlaying){
+			// Snap
+			transform.localPosition = new Vector3(
+				(int)transform.localPosition.x,
+				(int)transform.localPosition.y,
+				(int)transform.localPosition.z
+			);
+			UpdateTilePosFromLocalPos();
+
+			return;
+		}
+
 		Vector3 desiredPos = new Vector3(
 			tilePos.x, 
 			Board.currBoard.playerRow - tilePos.y, 
@@ -35,6 +53,14 @@ public class Tile : MonoBehaviour {
 		float fac = snapSpeed * 60 * Time.deltaTime;
 		fac = Mathf.Clamp(fac, 0, 1);
 		transform.localPosition = Vector3.Lerp(transform.localPosition, desiredPos, fac);
+	}
+
+	void UpdateTilePosFromLocalPos(){
+		tilePos = new Vector2(
+			(int)transform.localPosition.x,
+			(int)-transform.localPosition.y
+		); 
+
 	}
 
 	public bool IsSolid(){

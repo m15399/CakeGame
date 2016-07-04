@@ -1,7 +1,5 @@
 things that dance can be moved with arrow keys
 when a dude eats cake, he turns into happy fixed block
-you win when there are no more dudes in your control
-or when you eat all the cake?
 
 different dudes have different properties:
 one-way guys with arrows
@@ -44,6 +42,20 @@ need a 64x64 font
 
 programming:
 preload all text files?
+	have a cache of common files, keep the current level for restarts
+overlapping tiles can stack
+	return overlap finish type - keep overlapped, keep overlapper
+
+transition to unity editor as level editor?
+auto update out of date nested prefabs 
+	stubs? prefab deletes itself and spawns new one
+	Button.cs - code populates the basic prefab with everything it needs
+go back to tiled
+	have tile args like: 2,1 -> “prop1,prop2,etc”
+multi scene editing
+	each level is a scene
+	
+
 
 
 store:

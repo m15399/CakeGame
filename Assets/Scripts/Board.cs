@@ -65,6 +65,43 @@ public class Board : MonoBehaviour {
 		return success;
 	}
 
+	public void LoadBoardFromPrefab(GameObject prefab){
+		// TODO
+		// start row
+		// full width walls
+
+		ClearBoard();
+
+		GameObject level = GameObject.Instantiate(prefab);
+		level.SetActive(true);
+		level.transform.parent = transform;
+		level.transform.localPosition = new Vector3();
+
+		LevelProperties props = level.GetComponent<LevelProperties>();
+		if(props == null){
+			Debug.LogError("No level properties found on" + prefab.name + ". " +
+				"Must know width, height to create board");
+			return;
+		}
+
+		Resize(props.width, props.height);
+
+		Tile[] levelTiles = level.GetComponentsInChildren<Tile>();
+
+		Debug.Log("Loading prefab: " + prefab.name + ". Size: " + width + " x " + height +
+			". Tiles: " + levelTiles.Length);
+
+		foreach(Tile tile in levelTiles){
+			AddTile(tile.tx, tile.ty, tile);
+			tile.transform.position = new Vector3(); // move to center for fly in animation
+		}
+
+		CheckTileCoords();
+
+		loadingBoard = false;
+		allowInput = true;
+	}
+
 	void LoadNextBoard(){
 		if(nextLevelName.Length > 0){
 			LoadBoard(nextLevelName);
@@ -113,6 +150,11 @@ public class Board : MonoBehaviour {
 			nextLevelName = level;
 			Invoke("LoadNextBoard", defaultEndWaitTime);
 		}
+	}
+
+	void Resize(int w, int h){
+		width = w; height = h;
+		Resize();
 	}
 
 	void Resize(){
@@ -246,7 +288,7 @@ public class Board : MonoBehaviour {
 	}
 
 	// Destroy a tile and replace it with another one
-	public void SwapOutTile(Tile tile, Tile newTile){
+	public void SwapOutTile(Tile tile, Tile newTile){		
 		newTile.transform.localPosition = tile.transform.localPosition;
 		newTile.tilePos = tile.tilePos;
 
@@ -309,7 +351,7 @@ public class Board : MonoBehaviour {
 
 	void PrintIds(){
 		string s = "";
-		Debug.Log("Printing Solids");
+		Debug.Log("Printing Ids");
 		for(int j = 0; j < height; j++){
 			for(int i = 0; i < width; i++ ){
 				Tile tile = tiles[i, j];
@@ -335,7 +377,7 @@ public class Board : MonoBehaviour {
 					int tx = tile.tx, ty = tile.ty;
 					if(tx != i || ty != j){
 						Debug.Log("Tile coords test failed: " + i + ", " + j + 
-							"(found " + tx + ", " + ty + ")");
+							" (found tile coord of " + tx + ", " + ty + ")");
 						success = false;
 					}
 				}
