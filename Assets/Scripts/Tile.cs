@@ -26,24 +26,19 @@ public class Tile : MonoBehaviour {
 	public int tx { get { return (int)tilePos.x; }}
 	public int ty { get { return (int)tilePos.y; }}
 
-	void Start(){
-
+	TileModifier _tileModifier = null;
+	public TileModifier tileModifier {
+		get {
+			if(_tileModifier == null){
+				_tileModifier = GetComponent<TileModifier>();
+				if(_tileModifier == null)
+					_tileModifier = gameObject.AddComponent<TileModifier>() as TileModifier;
+			}
+			return _tileModifier;
+		}
 	}
 
 	void Update () {
-		// Edit mode
-		if(!Application.isPlaying){
-			// Snap
-			transform.localPosition = new Vector3(
-				(int)transform.localPosition.x,
-				(int)transform.localPosition.y,
-				(int)transform.localPosition.z
-			);
-			UpdateTilePosFromLocalPos();
-
-			return;
-		}
-
 		Vector3 desiredPos = new Vector3(
 			tilePos.x, 
 			Board.currBoard.playerRow - tilePos.y, 
@@ -55,15 +50,7 @@ public class Tile : MonoBehaviour {
 		transform.localPosition = Vector3.Lerp(transform.localPosition, desiredPos, fac);
 	}
 
-	void UpdateTilePosFromLocalPos(){
-		tilePos = new Vector2(
-			(int)transform.localPosition.x,
-			(int)-transform.localPosition.y
-		); 
-
-	}
-
-	public bool IsSolid(){
+	public bool IsSolid(Tile entrant){
 		switch(overlapType){
 		case OverlapType.OVERLAPPABLE:
 			return false;
@@ -79,7 +66,7 @@ public class Tile : MonoBehaviour {
 			return true;
 		case MoveType.MOVES:
 		default:
-			return !Board.currBoard.IsSolid(tilePos + dir);
+			return !Board.currBoard.IsSolid(tilePos + dir, this);
 		}
 	}
 
@@ -103,11 +90,6 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
-	public void WasOverlapped(Tile other){
-		OverlapHandler oh = GetComponent<OverlapHandler>();
-		if(oh != null)
-			oh.WasOverlapped(this, other);
-		else
-			GameObject.Destroy(gameObject);
-	}
+	public void WasOverlapped(Tile other){ tileModifier.OnOverlap(this, other); }
+	public void PassArgs(string[] args){ tileModifier.PassArgs(args); }
 }

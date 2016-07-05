@@ -12,7 +12,7 @@ blocks:
 pushable
 spikes/lava must be hopped, lasers must be ghosted through
 breakable
-buttons, gates can be ghosted through
+buttons, gates can be ghosted through, bridges 
 side portals (loop around)
 invisible wall 
 
@@ -45,16 +45,6 @@ preload all text files?
 	have a cache of common files, keep the current level for restarts
 overlapping tiles can stack
 	return overlap finish type - keep overlapped, keep overlapper
-
-transition to unity editor as level editor?
-auto update out of date nested prefabs 
-	stubs? prefab deletes itself and spawns new one
-	Button.cs - code populates the basic prefab with everything it needs
-go back to tiled
-	have tile args like: 2,1 -> “prop1,prop2,etc”
-multi scene editing
-	each level is a scene
-	
 
 
 

@@ -26,6 +26,28 @@ public class TiledImporter {
 		return OpenLevel(levelName) != null;
 	}
 
+	static void ProcessProperties(XmlNodeList properties){
+		foreach(XmlNode property in properties){
+			string name = property.Attributes["name"].Value;
+			string value = property.Attributes["value"].Value;
+
+			switch(name){
+			case "Start Row":
+				Board.currBoard.startRow = topWallOffset + int.Parse(value);
+				break;
+			default:
+				// Tile args
+				string[] coords = name.Split(',');
+				int tx, ty;
+				if(int.TryParse(coords[0], out tx) && int.TryParse(coords[1], out ty)){
+					Tile tile = Board.currBoard.GetTile(tx, ty + topWallOffset);
+					tile.PassArgs(value.Split(','));
+				}
+				break;
+			}
+		}
+	}
+
 	// Expects the name of a csv-mode .tmx file, renamed to .txt
 	public static bool Import(string levelName){
 
@@ -48,27 +70,6 @@ public class TiledImporter {
 		Board.currBoard.height = height + bottomWallOffset + topWallOffset;
 		Board.currBoard.startRow = topWallOffset;
 
-		string[] jumpLevels = null;
-		int currJumpLevel = 0;
-
-		XmlNodeList properties = xml.SelectNodes("map/properties/property");
-		foreach(XmlNode property in properties){
-			string name = property.Attributes["name"].Value;
-			string value = property.Attributes["value"].Value;
-//			Debug.Log("Prop - " + name + ", " + value);
-
-			switch(name){
-			case "Start Row":
-				Board.currBoard.startRow = topWallOffset + int.Parse(value);
-				break;
-			case "Jump Levels":
-				jumpLevels = value.Split(',');
-				break;
-			default:
-				break;
-			}
-		}
-
 		XmlNode dataNode = xml.SelectSingleNode("map/layer/data");
 		string dataString = dataNode.InnerText;
 		if(dataString.Length == 0){
@@ -87,20 +88,6 @@ public class TiledImporter {
 
 				Tile tile = TileFactory.CreateAndAddTile(tileType, x, y + topWallOffset);
 
-				switch(tileType){
-				case TileType.JUMP_LEVEL:
-					if(jumpLevels == null || currJumpLevel >= jumpLevels.Length)
-						Debug.LogError("Not enough 'Jump Levels' given in Tiled level.");
-					else {
-						string jumpLevel = jumpLevels[currJumpLevel++];
-						JumpLevelOverlapHandler overlapHandler = tile.GetComponent<JumpLevelOverlapHandler>();
-						overlapHandler.jumpLevel = jumpLevel;
-					}
-					break;
-				default:
-					break;
-				}
-
 				if(tile != null)
 					maxY = y + topWallOffset;
 				i++;
@@ -110,6 +97,9 @@ public class TiledImporter {
 		// Add wall at top and bottom
 		TileFactory.AddFullWidthWall(0);
 		TileFactory.AddFullWidthWall(maxY + bottomWallOffset);
+
+		ProcessProperties(xml.SelectNodes("map/properties/property"));
+		ProcessProperties(xml.SelectNodes("map/layer/properties/property"));
 
 		return true;
 	}

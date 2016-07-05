@@ -15,11 +15,7 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	string levelName, nextLevelName;
-	bool loadingBoard = true;
 
-	public GameObject viewBlockerPrefab;
-	GameObject vbl, vbr;
 
 	Tile[,] tiles;
 	int _width, _height;
@@ -33,6 +29,12 @@ public class Board : MonoBehaviour {
 	bool allowInput = false;
 	bool inputCenteredH = true;
 	bool inputCenteredV = true;
+
+	string levelName, nextLevelName;
+	bool loadingBoard = true;
+
+	public GameObject viewBlockerPrefab;
+	GameObject vbl, vbr;
 
 	void Start(){
 		vbl = GameObject.Instantiate(viewBlockerPrefab);
@@ -63,43 +65,6 @@ public class Board : MonoBehaviour {
 		}
 		loadingBoard = false;
 		return success;
-	}
-
-	public void LoadBoardFromPrefab(GameObject prefab){
-		// TODO
-		// start row
-		// full width walls
-
-		ClearBoard();
-
-		GameObject level = GameObject.Instantiate(prefab);
-		level.SetActive(true);
-		level.transform.parent = transform;
-		level.transform.localPosition = new Vector3();
-
-		LevelProperties props = level.GetComponent<LevelProperties>();
-		if(props == null){
-			Debug.LogError("No level properties found on" + prefab.name + ". " +
-				"Must know width, height to create board");
-			return;
-		}
-
-		Resize(props.width, props.height);
-
-		Tile[] levelTiles = level.GetComponentsInChildren<Tile>();
-
-		Debug.Log("Loading prefab: " + prefab.name + ". Size: " + width + " x " + height +
-			". Tiles: " + levelTiles.Length);
-
-		foreach(Tile tile in levelTiles){
-			AddTile(tile.tx, tile.ty, tile);
-			tile.transform.position = new Vector3(); // move to center for fly in animation
-		}
-
-		CheckTileCoords();
-
-		loadingBoard = false;
-		allowInput = true;
 	}
 
 	void LoadNextBoard(){
@@ -266,15 +231,19 @@ public class Board : MonoBehaviour {
 		return false;
 	}
 
-	public bool IsSolid(Vector2 pos){
+	public bool IsSolid(Vector2 pos, Tile entrant){
 		int tx = (int)pos.x, ty = (int)pos.y;
 
 		if(tx < 0 || tx >= width || ty < 0 || ty >= height) // outside board?
 			return true;
 		if(tiles[tx, ty] != null)
-			return tiles[tx, ty].IsSolid();
+			return tiles[tx, ty].IsSolid(entrant);
 
 		return false;
+	}
+
+	public Tile GetTile(int tx, int ty){
+		return tiles[tx, ty];
 	}
 
 	public void AddTile(int tx, int ty, Tile tile){
@@ -297,7 +266,7 @@ public class Board : MonoBehaviour {
 		GameObject.Destroy(tile.gameObject);
 	}
 
-	public void MoveTile(int tx, int ty, Vector2 dir){
+	void MoveTile(int tx, int ty, Vector2 dir){
 		Tile tile = tiles[tx, ty];
 		if(tile == null)
 			return; 

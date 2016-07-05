@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 443454}
   - 212: {fileID: 21249312}
   - 114: {fileID: 11450692}
-  - 114: {fileID: 11426448}
+  - 114: {fileID: 11492246}
   m_Layer: 0
   m_Name: JumpLevelTile
   m_TagString: Untagged
@@ -30,18 +30,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11426448
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 149452}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4aeca1bd1377a4536b5c2c259451b73d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  jumpLevel: 
 --- !u!114 &11450692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -57,6 +45,18 @@ MonoBehaviour:
   overlapType: 1
   type: 0
   tilePos: {x: 0, y: 0}
+--- !u!114 &11492246
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 149452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e02edc23ea9544528f26026b5f471cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpLevel: 
 --- !u!212 &21249312
 SpriteRenderer:
   m_ObjectHideFlags: 1

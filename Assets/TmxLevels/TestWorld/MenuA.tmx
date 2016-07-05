@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="3" height="80" tilewidth="128" tileheight="128" nextobjectid="1">
  <properties>
-  <property name="Jump Levels" value="World1/01,World2/01"/>
   <property name="Start Row" value="1"/>
  </properties>
  <tileset firstgid="1" name="BaseTileset" tilewidth="128" tileheight="128" tilecount="64" columns="8">
   <image source="../../Art/BaseTileset.png" width="1024" height="1024"/>
  </tileset>
  <layer name="Tile Layer 1" width="3" height="80">
+  <properties>
+   <property name="0,1" value="World1/01"/>
+   <property name="2,1" value="World2/01"/>
+  </properties>
   <data encoding="csv">
 0,0,0,
 5,1,5,
