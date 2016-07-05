@@ -61,7 +61,7 @@ public class TileFactory : MonoBehaviour {
 
 	public static void AddFullWidthWall(int ty){
 		for(int tx = 0; tx < Board.currBoard.width; tx++){
-			TileFactory.CreateAndAddTile(TileType.WALL, tx, ty);
+			TileFactory.CreateAndAddTile(TileType.INVISIBLE_WALL, tx, ty);
 		}
 	}
 

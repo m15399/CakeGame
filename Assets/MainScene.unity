@@ -163,6 +163,10 @@ MonoBehaviour:
     type: 4
   - prefab: {fileID: 149452, guid: d23524ac5907c468b94e03e5159d63b1, type: 2}
     type: 5
+  - prefab: {fileID: 149452, guid: 0ccb59e987fab43b78b0585cfed60621, type: 2}
+    type: 6
+  - prefab: {fileID: 149452, guid: 63c631e54cb6a4bb3b1c793d6be07270, type: 2}
+    type: 7
 --- !u!4 &1289457039
 Transform:
   m_ObjectHideFlags: 0
@@ -290,7 +294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuLevel: TestWorld/MenuA
   skipToLevel: 0
-  skipLevel: World1/01
+  skipLevel: World2/01
 --- !u!4 &1730825063
 Transform:
   m_ObjectHideFlags: 0

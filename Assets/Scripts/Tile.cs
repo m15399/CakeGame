@@ -17,6 +17,12 @@ public class Tile : MonoBehaviour {
 		OVERLAPPABLE
 	}
 
+	public enum OverlapResolution {
+		PUT_OVERLAPPED,
+		PUT_OVERLAPPER,
+		DO_NOTHING
+	}
+
 	public MoveType moveType;
 	public OverlapType overlapType;
 
@@ -89,7 +95,9 @@ public class Tile : MonoBehaviour {
 			return false;
 		}
 	}
-
-	public void WasOverlapped(Tile other){ tileModifier.OnOverlap(this, other); }
+		
+	public OverlapResolution WasOverlapped(Tile overlapper){ 
+		return tileModifier.OnOverlap(this, overlapper); 
+	}
 	public void PassArgs(string[] args){ tileModifier.PassArgs(args); }
 }

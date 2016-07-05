@@ -9,9 +9,10 @@ public class JumpLevelTileModifier : TileModifier {
 		jumpLevel = args[0];
 	}
 
-	public override void OnOverlap(Tile tile, Tile other){
+	public override Tile.OverlapResolution OnOverlap(Tile tile, Tile overlapper){
 		Board.currBoard.EndBoardAndLoad(jumpLevel);
 		GameObject.Destroy(tile.gameObject);
+		return Tile.OverlapResolution.PUT_OVERLAPPER;
 	}
 
 }

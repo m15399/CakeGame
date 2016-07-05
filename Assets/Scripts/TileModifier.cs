@@ -7,8 +7,9 @@ public class TileModifier : MonoBehaviour {
 		Debug.LogError("Unhandled tile arg: " + args[0]);
 	}
 
-	public virtual void OnOverlap(Tile tile, Tile other){
-		GameObject.Destroy(tile.gameObject);
+	public virtual Tile.OverlapResolution OnOverlap(Tile tile, Tile overlapper){
+		Debug.LogError("Unhandled overlap");
+		return Tile.OverlapResolution.DO_NOTHING;
 	}
 
 }

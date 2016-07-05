@@ -104,6 +104,11 @@ public class Board : MonoBehaviour {
 		}
 	}
 
+	public void LoseBoard(){
+		EndBoard();
+		Invoke("LoadBoard", defaultEndWaitTime);
+	}
+
 	void EndBoard(){
 		allowInput = false;
 		loadingBoard = true;
@@ -276,11 +281,24 @@ public class Board : MonoBehaviour {
 			Tile overlappedTile = tiles[tx2, ty2];
 
 			tiles[tx, ty] = null;
-			ReplaceTile(tx2, ty2, tile);
 
 			if(overlappedTile != null){
-				overlappedTile.WasOverlapped(tile);
+				Tile.OverlapResolution result = overlappedTile.WasOverlapped(tile);
+				switch(result){
+				case Tile.OverlapResolution.PUT_OVERLAPPER:
+					ReplaceTile(tx2, ty2, tile);
+					break;
+				case Tile.OverlapResolution.PUT_OVERLAPPED:
+					ReplaceTile(tx2, ty2, overlappedTile);
+					break;
+				case Tile.OverlapResolution.DO_NOTHING:
+				default:
+					break;
+				}
+			} else {
+				ReplaceTile(tx2, ty2, tile);
 			}
+
 		}
 	}
 

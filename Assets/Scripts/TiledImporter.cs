@@ -6,7 +6,7 @@ public class TiledImporter {
 
 	static string cachedLevelName = "";
 	static TextAsset cachedLevel = null;
-	static int bottomWallOffset = 12, topWallOffset = 10;
+	static int bottomWallOffset = 5, topWallOffset = 4;
 
 	static string GetLevelPath(string levelName){
 		return "Levels/" + levelName;

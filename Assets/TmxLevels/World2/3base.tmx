@@ -4,16 +4,13 @@
   <image source="../../Art/BaseTileset.png" width="1024" height="1024"/>
  </tileset>
  <layer name="Tile Layer 1" width="3" height="80">
-  <properties>
-   <property name="Start Row" value="1"/>
-  </properties>
   <data encoding="csv">
 0,0,0,
-1,1,0,
-0,0,6,
 0,0,0,
-2,0,3,
-2,3,0,
+0,0,0,
+0,0,0,
+0,0,0,
+0,0,0,
 0,0,0,
 0,0,0,
 0,0,0,

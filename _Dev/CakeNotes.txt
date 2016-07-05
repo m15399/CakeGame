@@ -14,7 +14,7 @@ spikes/lava must be hopped, lasers must be ghosted through
 breakable
 buttons, gates can be ghosted through, bridges 
 side portals (loop around)
-invisible wall 
+slide left/right/up/down
 
 levels:
 force to move up tutorial
@@ -24,21 +24,20 @@ different themes for each world (skins of wall/sides/ground)
 
 game:
 title screen has floating cake-star-field
-levels are laid out in a cake shape - each world is a slice
-level select - you move a guy around who eats the current world/level and 
-	a thought bubble above him gives a preview
-level select 2 - you move a guy and eat the cake that has the picture of the level
-	built into main menu?
+level select 4 - world select has big pictures of the world you can walk into
+	level select has the big picture and numbered boxes and back square
+		(this can be one level that auto-fetches the level names and pic)
 game menus
 	a 3x3 for menus - up down left right selects 
-	use board - buttons are cakes - landing on it sets the next “level”
 	deactivate curr board and select pause board for new one
 main menu - play, credits, options, dlc?
 	walk right into level select?
-options menu - audio (two walls you can walk into), control select, 
-	delete data, quit
-control select
+options - settings, quit to menu, resume
+	settings - audio (two walls you walk into), control select, delete data, back
+control select - similar to world select
 need a 64x64 font
+winning - shows .5s animation like confetti, glowy firework
+losing - shows animation like crying, sad trombone
 
 programming:
 preload all text files?
