@@ -3,9 +3,10 @@ using System.Collections;
 
 public class SpikesTileModifier : TileModifier {
 
-	public override Tile.OverlapResolution OnOverlap(Tile tile, Tile overlapper){
+	public override Tile.OverlapResolution OnOverlap(Tile overlapper){
+		if(overlapper.moveType == Tile.MoveType.MOVES)
+			Board.currBoard.LoseBoard();
 		GameObject.Destroy(overlapper.gameObject);
-		Board.currBoard.LoseBoard();
 		return Tile.OverlapResolution.PUT_OVERLAPPED;
 	}
 

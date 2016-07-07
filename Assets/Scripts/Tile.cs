@@ -9,12 +9,13 @@ public class Tile : MonoBehaviour {
 	public enum MoveType {
 		FIXED,
 		MOVES, 
-//		PUSHABLE
+		PUSHABLE
 	}
 
 	public enum OverlapType {
 		SOLID,
-		OVERLAPPABLE
+		OVERLAPPABLE,
+		CUSTOM
 	}
 
 	public enum OverlapResolution {
@@ -58,6 +59,8 @@ public class Tile : MonoBehaviour {
 
 	public bool IsSolid(Tile entrant){
 		switch(overlapType){
+		case OverlapType.CUSTOM:
+			return tileModifier.IsSolid(entrant);
 		case OverlapType.OVERLAPPABLE:
 			return false;
 		case OverlapType.SOLID:
@@ -66,29 +69,34 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
-	public bool MoveOk(Vector2 dir){
-		switch(moveType){
-		case MoveType.FIXED:
-			return true;
-		case MoveType.MOVES:
-		default:
-			return !Board.currBoard.IsSolid(tilePos + dir, this);
-		}
-	}
-
-	public bool WillMove(Vector2 dir){
+	public bool WillMove(Vector2 dir, Tile pusher){
 		switch(moveType){
 		case MoveType.FIXED:
 			return false;
 		case MoveType.MOVES:
-			return MoveOk(dir);
+			if(pusher != null)
+				if(pusher.ty != ty)
+					return false; // cannot push a dude vertically
+			
+			return !Board.currBoard.IsSolid(tilePos + dir, this) || 
+				Board.currBoard.WillMove(tilePos + dir, dir, this); 
+		case MoveType.PUSHABLE:
+			if(pusher == null)
+				return false;
+			return !Board.currBoard.IsSolid(tilePos + dir, this) || 
+				Board.currBoard.WillMove(tilePos + dir, dir, this);
 		default:
 			return false;
 		}
 	}
 
-	public bool AttemptMove(Vector2 dir){
-		if(WillMove(dir)){
+	public bool AttemptMove(Vector2 dir, Tile pusher){
+		if(WillMove(dir, pusher)){
+
+			if(Board.currBoard.IsSolid(tilePos + dir, this)){
+				Board.currBoard.MoveTile(tilePos + dir, dir, this);
+			}
+
 			tilePos += dir;
 			return true;
 		} else {
@@ -97,7 +105,7 @@ public class Tile : MonoBehaviour {
 	}
 		
 	public OverlapResolution WasOverlapped(Tile overlapper){ 
-		return tileModifier.OnOverlap(this, overlapper); 
+		return tileModifier.OnOverlap(overlapper); 
 	}
 	public void PassArgs(string[] args){ tileModifier.PassArgs(args); }
 }

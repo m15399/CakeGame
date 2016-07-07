@@ -11,6 +11,7 @@ public enum TileType {
 	EATENCAKE,
 	JUMP_LEVEL,
 	SPIKES,
-	INVISIBLE_WALL
+	INVISIBLE_WALL,
 
+	PUSH_BLOCK = 9,
 }

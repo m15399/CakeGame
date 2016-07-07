@@ -1,3 +1,4 @@
+
 things that dance can be moved with arrow keys
 when a dude eats cake, he turns into happy fixed block
 
@@ -10,6 +11,11 @@ skinny dude that eats 2 cakes
 
 blocks:
 pushable
+	movetype.pushable
+	willmove - return prevtile.willmove && nexttile.canbepushed
+	moveok - true
+	canbepushed - !nexttile.issolid || nexttile.canbepushed 
+
 spikes/lava must be hopped, lasers must be ghosted through
 breakable
 buttons, gates can be ghosted through, bridges 
@@ -21,6 +27,8 @@ force to move up tutorial
 force move past cake to get a cake on the other side, then come back up
 levels where one special guy (eg ghost) has to save dudes one at a time
 different themes for each world (skins of wall/sides/ground)
+other objective - push a non-moving guy onto his cake to help him out
+	he has a crown because hes the king dude (he is fat and unable to move)
 
 game:
 title screen has floating cake-star-field
@@ -43,7 +51,9 @@ programming:
 preload all text files?
 	have a cache of common files, keep the current level for restarts
 overlapping tiles can stack
-	return overlap finish type - keep overlapped, keep overlapper
+
+	
+
 
 
 

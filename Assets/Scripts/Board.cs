@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Board : MonoBehaviour {
 
-	const float defaultEndWaitTime = .6f;
+	const float defaultWinLoseTime = .6f, defaultJumpTime = .35f;
 
 	static Board _currBoard = null;
 	public static Board currBoard {
@@ -94,7 +94,7 @@ public class Board : MonoBehaviour {
 	}
 
 	void WinBoard(){
-		WinBoard(defaultEndWaitTime);
+		WinBoard(defaultWinLoseTime);
 	}
 
 	void WinBoard(float delay){
@@ -106,7 +106,7 @@ public class Board : MonoBehaviour {
 
 	public void LoseBoard(){
 		EndBoard();
-		Invoke("LoadBoard", defaultEndWaitTime);
+		Invoke("LoadBoard", defaultWinLoseTime);
 	}
 
 	void EndBoard(){
@@ -114,11 +114,11 @@ public class Board : MonoBehaviour {
 		loadingBoard = true;
 	}
 
-	public void EndBoardAndLoad(string level){
+	public void JumpToBoard(string level){
 		if(!loadingBoard){
 			EndBoard();
 			nextLevelName = level;
-			Invoke("LoadNextBoard", defaultEndWaitTime);
+			Invoke("LoadNextBoard", defaultJumpTime);
 		}
 	}
 
@@ -205,24 +205,24 @@ public class Board : MonoBehaviour {
 			if(Input.GetKeyDown("r")){
 				LoadBoard();
 			}
+		}
 
-			// Cheats
-			if(Application.isEditor){
-				if(Input.GetKeyDown("n"))
-					LoadBoardByAdding(1);
-				if(Input.GetKeyDown("p"))
-					LoadBoardByAdding(-1);
-				if(Input.GetKeyDown("1")) LoadBoardByNumber(1); 
-				if(Input.GetKeyDown("2")) LoadBoardByNumber(2); 
-				if(Input.GetKeyDown("3")) LoadBoardByNumber(3); 
-				if(Input.GetKeyDown("4")) LoadBoardByNumber(4); 
-				if(Input.GetKeyDown("5")) LoadBoardByNumber(5); 
-				if(Input.GetKeyDown("6")) LoadBoardByNumber(6); 
-				if(Input.GetKeyDown("7")) LoadBoardByNumber(7); 
-				if(Input.GetKeyDown("8")) LoadBoardByNumber(8); 
-				if(Input.GetKeyDown("9")) LoadBoardByNumber(9); 
-				if(Input.GetKeyDown("0")) LoadBoardByNumber(10); 
-			}
+		// Cheats
+		if(Application.isEditor){
+			if(Input.GetKeyDown("n"))
+				LoadBoardByAdding(1);
+			if(Input.GetKeyDown("p"))
+				LoadBoardByAdding(-1);
+			if(Input.GetKeyDown("1")) LoadBoardByNumber(1); 
+			if(Input.GetKeyDown("2")) LoadBoardByNumber(2); 
+			if(Input.GetKeyDown("3")) LoadBoardByNumber(3); 
+			if(Input.GetKeyDown("4")) LoadBoardByNumber(4); 
+			if(Input.GetKeyDown("5")) LoadBoardByNumber(5); 
+			if(Input.GetKeyDown("6")) LoadBoardByNumber(6); 
+			if(Input.GetKeyDown("7")) LoadBoardByNumber(7); 
+			if(Input.GetKeyDown("8")) LoadBoardByNumber(8); 
+			if(Input.GetKeyDown("9")) LoadBoardByNumber(9); 
+			if(Input.GetKeyDown("0")) LoadBoardByNumber(10); 
 		}
 
 	}
@@ -237,14 +237,33 @@ public class Board : MonoBehaviour {
 	}
 
 	public bool IsSolid(Vector2 pos, Tile entrant){
-		int tx = (int)pos.x, ty = (int)pos.y;
-
-		if(tx < 0 || tx >= width || ty < 0 || ty >= height) // outside board?
+		if(!InsideBoard(pos))
 			return true;
-		if(tiles[tx, ty] != null)
-			return tiles[tx, ty].IsSolid(entrant);
-
+		Tile tile = GetTile(pos);
+		if(tile != null)
+			return tile.IsSolid(entrant);
 		return false;
+	}
+
+	public bool WillMove(Vector2 pos, Vector2 dir, Tile pusher){
+		if(!InsideBoard(pos))
+			return false;
+		Tile tile = GetTile(pos);
+		if(tile != null)
+			return tile.WillMove(dir, pusher);
+		return false;
+	}
+
+	bool InsideBoard(Vector2 pos){
+		int tx = (int)pos.x, ty = (int)pos.y;
+		if(tx < 0 || tx >= width || ty < 0 || ty >= height)
+			return false;
+		return true;
+	}
+
+	public Tile GetTile(Vector2 pos){
+		int tx = (int)pos.x, ty = (int)pos.y;
+		return tiles[tx, ty];
 	}
 
 	public Tile GetTile(int tx, int ty){
@@ -271,12 +290,17 @@ public class Board : MonoBehaviour {
 		GameObject.Destroy(tile.gameObject);
 	}
 
-	void MoveTile(int tx, int ty, Vector2 dir){
-		Tile tile = tiles[tx, ty];
+	public void MoveTile(Vector2 pos, Vector2 dir, Tile pusher){
+		MoveTile(GetTile(pos), dir, pusher);
+	}
+
+	public void MoveTile(Tile tile, Vector2 dir, Tile pusher){
 		if(tile == null)
 			return; 
-
-		if(tile.AttemptMove(dir)){
+		int tx = tile.tx, ty = tile.ty;
+		
+		if(tile.AttemptMove(dir, pusher)){
+			
 			int tx2 = tx + (int)dir.x, ty2 = ty + (int)dir.y;
 			Tile overlappedTile = tiles[tx2, ty2];
 
@@ -308,7 +332,9 @@ public class Board : MonoBehaviour {
 		for(int i = 0; i < width; i++){
 			// start from right or left side, based on dirX
 			int tx = (dirX == 1 ? width - i - 1 : i);
-			MoveTile(tx, row, dir);
+			Tile tile = GetTile(tx, row);
+			if(tile != null && tile.moveType == Tile.MoveType.MOVES)
+				MoveTile(tile, dir, null);
 		}
 		CheckTileCoords();
 	}
@@ -320,16 +346,20 @@ public class Board : MonoBehaviour {
 		bool canMove = true;
 		for(int i = 0; i < width; i++){
 			Tile tile = tiles[i, row];
-			if(tile != null && !tiles[i, row].MoveOk(forwards)){
-				canMove = false;
-				break;
+			if(tile != null && tile.moveType == Tile.MoveType.MOVES){
+				if(!tile.WillMove(forwards, null)){
+					canMove = false;
+					break;
+				}
 			}
 		}
 
 		// Move row 
 		if(canMove){
 			for(int i = 0; i < width; i++){
-				MoveTile(i, row, forwards);
+				Tile tile = GetTile(i, row);
+				if(tile != null && tile.moveType == Tile.MoveType.MOVES)
+					MoveTile(tile, forwards, null);
 			}
 			_playerRow += dirY;
 		}
