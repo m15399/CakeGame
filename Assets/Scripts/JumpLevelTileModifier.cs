@@ -11,7 +11,7 @@ public class JumpLevelTileModifier : TileModifier {
 
 	public override Tile.OverlapResolution OnOverlap(Tile overlapper){
 		Board.currBoard.JumpToBoard(jumpLevel);
-		GameObject.Destroy(tile.gameObject);
+		tile.Kill(Tile.KillReason.SQUISHED);
 		return Tile.OverlapResolution.PUT_OVERLAPPER;
 	}
 

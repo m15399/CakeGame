@@ -7,6 +7,15 @@ public class Game : MonoBehaviour {
 	public bool skipToLevel;
 	public string skipLevel;
 
+	static Game _instance = null;
+	public static  Game instance{
+		get {
+			if(_instance == null)
+				_instance = GameObject.Find("Game").GetComponent<Game>();
+			return _instance;
+		}
+	}
+
 	public void Start(){
 		Invoke("OpenFirstBoard", .25f);
 	}
@@ -15,7 +24,11 @@ public class Game : MonoBehaviour {
 		if(skipToLevel && skipLevel.Length > 0)
 			Board.currBoard.LoadBoard(skipLevel);
 		else
-			Board.currBoard.LoadBoard(mainMenuLevel);
+			ReturnToMenu();
+	}
+
+	public void ReturnToMenu(){
+		Board.currBoard.LoadBoard(mainMenuLevel);
 	}
 
 }

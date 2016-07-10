@@ -90,6 +90,7 @@ public class Board : MonoBehaviour {
 		if(!success){
 			Debug.Log("Couldn't find level: " + levelName);
 			levelName = prevLevelName;
+			Game.instance.ReturnToMenu();
 		}
 	}
 
@@ -278,6 +279,10 @@ public class Board : MonoBehaviour {
 
 	public void ReplaceTile(int tx, int ty, Tile newTile){
 		tiles[tx, ty] = newTile;
+	}
+
+	public void RemoveTile(Tile tile){
+		tiles[tile.tx, tile.ty] = null;
 	}
 
 	// Destroy a tile and replace it with another one

@@ -24,8 +24,20 @@ public class Tile : MonoBehaviour {
 		DO_NOTHING
 	}
 
-	public MoveType moveType;
-	public OverlapType overlapType;
+	public enum DestructableType {
+		INDESTRUCTABLE,
+		DESTRUCTABLE
+	}
+
+	public enum KillReason {
+		STABBED,
+		SQUISHED,
+		EATEN
+	}
+
+	public MoveType moveType = MoveType.FIXED;
+	public OverlapType overlapType = OverlapType.SOLID;
+	public DestructableType destructableType = DestructableType.INDESTRUCTABLE;
 
 	public TileType type = TileType.NONE;
 
@@ -57,6 +69,10 @@ public class Tile : MonoBehaviour {
 		transform.localPosition = Vector3.Lerp(transform.localPosition, desiredPos, fac);
 	}
 
+	public void Kill(KillReason reason){
+		GameObject.Destroy(gameObject);
+	}
+
 	public bool IsSolid(Tile entrant){
 		switch(overlapType){
 		case OverlapType.CUSTOM:
@@ -70,29 +86,15 @@ public class Tile : MonoBehaviour {
 	}
 
 	public bool WillMove(Vector2 dir, Tile pusher){
-		switch(moveType){
-		case MoveType.FIXED:
-			return false;
-		case MoveType.MOVES:
-			if(pusher != null)
-				if(pusher.ty != ty)
-					return false; // cannot push a dude vertically
-			
-			return !Board.currBoard.IsSolid(tilePos + dir, this) || 
-				Board.currBoard.WillMove(tilePos + dir, dir, this); 
-		case MoveType.PUSHABLE:
-			if(pusher == null)
-				return false;
-			return !Board.currBoard.IsSolid(tilePos + dir, this) || 
-				Board.currBoard.WillMove(tilePos + dir, dir, this);
-		default:
-			return false;
-		}
+		return tileModifier.WillMove(dir, pusher);
 	}
 
 	public bool AttemptMove(Vector2 dir, Tile pusher){
 		if(WillMove(dir, pusher)){
 
+			tileModifier.PreMove(dir, pusher);
+
+			// Try to push
 			if(Board.currBoard.IsSolid(tilePos + dir, this)){
 				Board.currBoard.MoveTile(tilePos + dir, dir, this);
 			}

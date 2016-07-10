@@ -8,10 +8,11 @@ public enum TileType {
 	DUDE,
 	WALL,
 	CAKE,
-	EATENCAKE,
+	EATEN_CAKE,
 	JUMP_LEVEL,
 	SPIKES,
 	INVISIBLE_WALL,
+	SWORD_DUDE,
 
 	PUSH_BLOCK = 9,
 }

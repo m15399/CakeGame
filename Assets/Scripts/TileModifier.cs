@@ -26,4 +26,29 @@ public class TileModifier : MonoBehaviour {
 		return true;
 	}
 
+	public virtual bool WillMove(Vector2 dir, Tile pusher){
+		switch(tile.moveType){
+		case Tile.MoveType.FIXED:
+			return false;
+		case Tile.MoveType.MOVES:
+			if(pusher != null)
+			if(pusher.ty != tile.ty)
+				return false; // cannot push a dude vertically
+
+			return !Board.currBoard.IsSolid(tile.tilePos + dir, tile) || 
+				Board.currBoard.WillMove(tile.tilePos + dir, dir, tile); 
+		case Tile.MoveType.PUSHABLE:
+			if(pusher == null)
+				return false;
+			return !Board.currBoard.IsSolid(tile.tilePos + dir, tile) || 
+				Board.currBoard.WillMove(tile.tilePos + dir, dir, tile);
+		default:
+			return false;
+		}
+	}
+
+	public virtual void PreMove(Vector2 dir, Tile pusher){
+		
+	}
+
 }

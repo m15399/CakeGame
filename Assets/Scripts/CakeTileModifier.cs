@@ -4,8 +4,8 @@ using System.Collections;
 public class CakeTileModifier : TileModifier {
 
 	public override Tile.OverlapResolution OnOverlap(Tile overlapper){
-		Board.currBoard.SwapOutTile(overlapper, TileFactory.CreateTile(TileType.EATENCAKE));
-		GameObject.Destroy(tile.gameObject);
+		Board.currBoard.SwapOutTile(overlapper, TileFactory.CreateTile(TileType.EATEN_CAKE));
+		tile.Kill(Tile.KillReason.EATEN);
 		return Tile.OverlapResolution.DO_NOTHING;
 	}
 

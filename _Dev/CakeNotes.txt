@@ -3,21 +3,16 @@ things that dance can be moved with arrow keys
 when a dude eats cake, he turns into happy fixed block
 
 different dudes have different properties:
-one-way guys with arrows
+one-way guys with arrows, special one that flips every vertical move?
 hop 2 spaces 
-hop every 2 moves
-swing sword before moving
+hop every 2 moves - sleepy guy
 skinny dude that eats 2 cakes
+king - acts like a push block, must be pushed onto a cake to complete level
+	has a crown, is fat and unable to move by himself
+pressing up/down has effects even if no move happens
 
 blocks:
-pushable
-	movetype.pushable
-	willmove - return prevtile.willmove && nexttile.canbepushed
-	moveok - true
-	canbepushed - !nexttile.issolid || nexttile.canbepushed 
-
 spikes/lava must be hopped, lasers must be ghosted through
-breakable
 buttons, gates can be ghosted through, bridges 
 side portals (loop around)
 slide left/right/up/down
@@ -27,8 +22,21 @@ force to move up tutorial
 force move past cake to get a cake on the other side, then come back up
 levels where one special guy (eg ghost) has to save dudes one at a time
 different themes for each world (skins of wall/sides/ground)
-other objective - push a non-moving guy onto his cake to help him out
-	he has a crown because hes the king dude (he is fat and unable to move)
+
+story:
+told with simple animations between worlds - similar to pacman
+each world has a different type of cake
+1 - gardens
+	wake up, jump out of bed, tummy grumbling, thinking of cake
+	4 wide
+2 - castle halls
+	a few dudes see a castle with cake inside, cake! one says, they run in
+	4 wide, add spikes, pushblocks, sword guys
+x - dungeons
+	find the king, he says he ate all his cake, his tummy grumbles, asks for cake
+	5 wide, king levels (or buttons??)
+width progression is close to 34567, but depends on story
+story 1 - go in castle, find king, cake has been mysteriously eaten, mysterious monster, take secret exit, chased by monster, escape, monster comes out behind you, it’s the king’s enormous brother
 
 game:
 title screen has floating cake-star-field

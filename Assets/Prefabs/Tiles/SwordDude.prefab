@@ -10,8 +10,9 @@ GameObject:
   - 4: {fileID: 443454}
   - 212: {fileID: 21249312}
   - 114: {fileID: 11450692}
+  - 114: {fileID: 11441162}
   m_Layer: 0
-  m_Name: PushBlock
+  m_Name: SwordDude
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,6 +30,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &11441162
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 149452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b41c0fdedb28140ebaf43ebf992d1cc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11450692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -40,9 +52,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c55c36395d2349e095ae45768a1a14a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveType: 2
+  moveType: 1
   overlapType: 0
-  destructableType: 1
+  destructableType: 0
   type: 0
   tilePos: {x: 0, y: 0}
 --- !u!212 &21249312
@@ -71,7 +83,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300020, guid: 8eed5ed7d7735420cb330069ffc3602c, type: 3}
+  m_Sprite: {fileID: 21300018, guid: 8eed5ed7d7735420cb330069ffc3602c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
