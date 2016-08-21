@@ -36,6 +36,7 @@ x - dungeons
 	find the king, he says he ate all his cake, his tummy grumbles, asks for cake
 	5 wide, king levels (or buttons??)
 width progression is close to 34567, but depends on story
+	hard mode - repeat the story with harder levels, secret ending
 story 1 - go in castle, find king, cake has been mysteriously eaten, mysterious monster, take secret exit, chased by monster, escape, monster comes out behind you, it’s the king’s enormous brother
 
 game:
@@ -60,7 +61,7 @@ preload all text files?
 	have a cache of common files, keep the current level for restarts
 overlapping tiles can stack
 
-	
+
 
 
 
